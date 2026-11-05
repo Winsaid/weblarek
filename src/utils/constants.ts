@@ -1,4 +1,6 @@
-/* Константа для получения полного пути для сервера. Для выполнения запроса 
+import { TBuyerErrors } from '../types';
+
+/* Константа для получения полного пути для сервера. Для выполнения запроса
 необходимо к API_URL добавить только ендпоинт. */
 export const API_URL = `${import.meta.env.VITE_API_ORIGIN}/api/weblarek`; 
 
@@ -14,6 +16,20 @@ export const categoryMap = {
   'кнопка': 'card__category_button',
   'дополнительное': 'card__category_additional',
   'другое': 'card__category_other',
+};
+
+/* Константа с эндпоинтами сервера, которые добавляются к API_URL. */
+export const apiEndpoints = {
+  products: '/product/',
+  order: '/order/',
+};
+
+/* Константа с текстами ошибок валидации данных покупателя. */
+export const buyerErrorMessages: Required<TBuyerErrors> = {
+  payment: 'Не выбран вид оплаты',
+  email: 'Укажите email',
+  phone: 'Укажите телефон',
+  address: 'Укажите адрес доставки',
 };
 
 export const settings = {
