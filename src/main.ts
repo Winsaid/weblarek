@@ -17,7 +17,7 @@ import { Modal } from './components/View/Modal';
 import { OrderForm } from './components/View/OrderForm';
 import { Success } from './components/View/Success';
 import { IBuyer, IOrderRequest, IProduct, TContactsForm, TOrderForm } from './types';
-import { API_URL, uiTexts } from './utils/constants';
+import { API_URL, CDN_URL, uiTexts } from './utils/constants';
 import { cloneTemplate, ensureElement } from './utils/utils';
 
 const events = new EventEmitter();
@@ -37,7 +37,7 @@ const successTemplate = ensureElement<HTMLTemplateElement>('#success');
 
 const header = new Header(ensureElement('.header'), events);
 const gallery = new Gallery(ensureElement('.gallery'));
-const modal = new Modal(ensureElement('#modal-container'), events);
+const modal = new Modal(ensureElement('#modal-container'));
 const cardPreview = new CardPreview(cloneTemplate(cardPreviewTemplate), {
     onClick: () => events.emit('card:toggle'),
 });
@@ -53,21 +53,6 @@ function getPreviewButtonText(product: IProduct): string {
 
 function joinErrors(...errors: (string | undefined)[]): string {
     return errors.filter(Boolean).join('; ');
-}
-
-function renderBasket(): HTMLElement {
-    const cards = cartModel.getItems().map((product, index) => {
-        const card = new CardBasket(cloneTemplate(cardBasketTemplate), {
-            onClick: () => events.emit('basket:remove', product),
-        });
-        return card.render({ title: product.title, price: product.price, index: index + 1 });
-    });
-
-    return basket.render({
-        items: cards,
-        total: cartModel.getTotal(),
-        buttonDisabled: cartModel.getCount() === 0,
-    });
 }
 
 function getOrderFormState(): TOrderForm {
@@ -129,8 +114,19 @@ events.on('product:selected', () => {
 });
 
 events.on('basket:changed', () => {
+    const cards = cartModel.getItems().map((product, index) => {
+        const card = new CardBasket(cloneTemplate(cardBasketTemplate), {
+            onClick: () => events.emit('basket:remove', product),
+        });
+        return card.render({ title: product.title, price: product.price, index: index + 1 });
+    });
+
     header.render({ counter: cartModel.getCount() });
-    renderBasket();
+    basket.render({
+        items: cards,
+        total: cartModel.getTotal(),
+        buttonDisabled: cartModel.getCount() === 0,
+    });
 });
 
 events.on('buyer:changed', () => {
@@ -156,7 +152,7 @@ events.on('card:toggle', () => {
 });
 
 events.on('basket:open', () => {
-    openModal(renderBasket());
+    openModal(basket.render());
 });
 
 events.on<IProduct>('basket:remove', (product) => {
@@ -164,7 +160,7 @@ events.on<IProduct>('basket:remove', (product) => {
 });
 
 events.on('order:open', () => {
-    openModal(orderForm.render(getOrderFormState()));
+    openModal(orderForm.render());
 });
 
 events.on<Partial<IBuyer>>('form:change', (data) => {
@@ -172,7 +168,7 @@ events.on<Partial<IBuyer>>('form:change', (data) => {
 });
 
 events.on('order:submit', () => {
-    openModal(contactsForm.render(getContactsFormState()));
+    openModal(contactsForm.render());
 });
 
 events.on('contacts:submit', () => {
@@ -204,15 +200,17 @@ events.on('success:close', () => {
     modal.close();
 });
 
-events.on('modal:close', () => {
-    modal.close();
-});
+/* Стартовое состояние моделей и загрузка каталога с сервера */
+cartModel.clear();
+buyerModel.clear();
 
-/* Загрузка каталога с сервера */
 shopApi
     .getProducts()
     .then((response) => {
-        productsModel.setItems(response.items);
+        productsModel.setItems(response.items.map((product) => ({
+            ...product,
+            image: `${CDN_URL}${product.image}`,
+        })));
     })
     .catch((error) => {
         console.error('Не удалось загрузить каталог товаров', error);

@@ -1,8 +1,8 @@
 import { ICardActions, TCardPreview } from '../../types';
 import { ensureElement } from '../../utils/utils';
-import { Card } from './Card';
+import { CardWithImage } from './CardWithImage';
 
-export class CardPreview extends Card<TCardPreview> {
+export class CardPreview extends CardWithImage<TCardPreview> {
     protected descriptionElement: HTMLElement;
     protected buttonElement: HTMLButtonElement;
 
