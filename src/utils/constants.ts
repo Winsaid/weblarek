@@ -32,6 +32,16 @@ export const buyerErrorMessages: Required<TBuyerErrors> = {
   address: 'Укажите адрес доставки',
 };
 
+/* Константа с текстами интерфейса. */
+export const uiTexts = {
+  currency: 'синапсов',
+  priceless: 'Бесценно',
+  debited: 'Списано',
+  buy: 'Купить',
+  removeFromBasket: 'Удалить из корзины',
+  unavailable: 'Недоступно',
+};
+
 export const settings = {
 
 };

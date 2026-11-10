@@ -1,3 +1,5 @@
+import { uiTexts } from './constants';
+
 export function pascalToKebab(value: string): string {
     return value.replace(/([a-z0–9])([A-Z])/g, "$1-$2").toLowerCase();
 }
@@ -135,4 +137,11 @@ export function createElement<
         }
     }
     return element;
+}
+
+/**
+ * Форматирует цену в синапсах
+ */
+export function formatPrice(value: number): string {
+    return `${value} ${uiTexts.currency}`;
 }

@@ -48,3 +48,55 @@ export interface IOrderResponse {
     id: string;
     total: number;
 }
+
+/* Обработчик действия пользователя, который карточка получает в конструкторе. */
+export interface ICardActions {
+    onClick: () => void;
+}
+
+/* Данные для отображения карточек товара. */
+export type TCard = Pick<IProduct, 'title' | 'price'>;
+
+export type TCardCatalog = TCard & Pick<IProduct, 'image' | 'category'>;
+
+export type TCardPreview = TCardCatalog & Pick<IProduct, 'description'> & {
+    buttonText: string;
+    buttonDisabled: boolean;
+};
+
+export type TCardBasket = TCard & {
+    index: number;
+};
+
+/* Данные для отображения компонентов страницы. */
+export interface IHeader {
+    counter: number;
+}
+
+export interface IGallery {
+    catalog: HTMLElement[];
+}
+
+export interface IModal {
+    content: HTMLElement;
+}
+
+export interface IBasket {
+    items: HTMLElement[];
+    total: number;
+    buttonDisabled: boolean;
+}
+
+export interface ISuccess {
+    total: number;
+}
+
+/* Данные для отображения форм оформления заказа. */
+export interface IFormState {
+    valid: boolean;
+    errors: string;
+}
+
+export type TOrderForm = IFormState & Pick<TBuyerData, 'payment' | 'address'>;
+
+export type TContactsForm = IFormState & Pick<TBuyerData, 'email' | 'phone'>;
